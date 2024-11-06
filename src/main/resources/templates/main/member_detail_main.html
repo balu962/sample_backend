@@ -1,0 +1,98 @@
+<div th:fragment="main" class="content-wrapper">
+	<style>
+#nicknameCheckResult {
+            display: none; /* 기본적으로 숨김 */
+            color: white; /* 텍스트 색상 */
+            background-color: rgba(255, 0, 0, 0.6); /* 반투명한 빨간색 배경 */
+            padding: 10px; /* 여백 추가 */
+            margin-bottom: 10px; /* 아래쪽 여백 */
+            border-radius: 5px; /* 모서리 둥글게 */
+        }
+</style>
+
+	<div class="content-header">
+<input type="hidden" id="csrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+		<div class="container-fluid">
+			<div class="row mb-2">
+				<div class="col-sm-6">
+					<h3 class="my-2">유저 페이지</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="mx-3 my-2 w-75 card">
+	<div class="mx-2">
+	<a th:text="|이메일 : ${email}|"></a><br> <a
+		th:text="|닉네임 : ${nickname}|"></a>
+        <div th:each="auth : ${#authentication.authorities}">
+            <a th:text="|현재 접속자 권한 : ${auth.authority}|"></a>
+        </div>
+<div class="my-3">
+	<!-- 닉네임 중복 확인 메세지 표시 -->
+	<div id="nicknameCheckResult"></div>
+	<!-- 닉네임 변경 누른 후 메세지 표시 -->
+	    <div th:if="${nicknameModifyMessage}" class=card>
+        <p th:text="${nicknameModifyMessage}"></p>
+        </div>
+	<form th:action="@{/member/modify/nickname}" method="post">
+			      <!--/* CSRF 토큰 */-->
+	<input type="hidden" th:name="${ _csrf.parameterName }" th:value="${ _csrf.token }"/>
+		<input type="text" id="nickname" name="nickname"
+			placeholder="변경하고 싶은 닉네임"></a>
+		<button type="button" onclick="checkNickname()">중복 확인</button>
+		<button type="submit" class="btn btn-primary mx-3" id="modifyNickname" disabled>닉네임
+			변경</button>
+	</form>
+	</div>
+	<!-- 비밀번호 변경 누른 후 메세지 표시 -->
+	    <div th:if="${passwordModifyMessage}" class="card">
+        <p th:text="${passwordModifyMessage}"></p>
+        </div>
+	<form th:action="@{/member/modify/password}" method="post">
+			      <!--/* CSRF 토큰 */-->
+	<input type="hidden" th:name="${ _csrf.parameterName }" th:value="${ _csrf.token }"/>
+		<input type="password" placeholder="기존 비밀번호 입력" id="password"
+			name="password"></a> <br>
+			<input type="password"
+			placeholder="변경하려는 비밀번호" id="newPassword" name="newPassword"></a>
+		<button type="submit" class="btn btn-primary mx-3 mb-2">비밀번호
+			변경</button>
+	</form>
+
+	<script>
+	function checkNickname() {
+	    var nickname = $("#nickname").val();
+	    if (nickname.trim() === "") {
+	        $("#nicknameCheckResult").text("원하는 닉네임을 입력해주세요").show();
+	        return;
+	    }
+
+	    // CSRF 토큰 읽기
+	    var csrfToken = $("#csrfToken").val();
+
+	    $.ajax({
+	        type: "POST",
+	        url: "/member/duplication/nickname",
+	        data: { nickname: nickname },
+	        beforeSend: function(xhr) {
+	            xhr.setRequestHeader("X-CSRF-TOKEN", csrfToken);
+	        },
+	        success: function(response) {
+	            if (response===true) {
+	                $("#nicknameCheckResult").text("이미 사용 중인 닉네임입니다.").show();
+	                document.getElementById('modifyNickname').disabled = true;
+	            } else {
+	                $("#nicknameCheckResult").text("사용 가능한 닉네임입니다.").show();
+	                document.getElementById('modifyNickname').disabled = false;
+	            }
+	        },
+	        error: function() {
+	            $("#nicknameCheckResult").text("오류가 발생했습니다.").show();
+	        }
+	    });
+	}
+      </script>
+<div id="memberDetail"></div>
+</div>
+</div>
+</div>

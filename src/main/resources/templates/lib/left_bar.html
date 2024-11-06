@@ -1,0 +1,46 @@
+
+
+<aside th:fragment="left"
+	class="main-sidebar sidebar-dark-primary elevation-4">
+	<a href="/" class="brand-link"> <span
+		class="brand-text font-weight-light">sample 사이트</span>
+	</a>
+
+
+	<!-- Sidebar Menu -->
+	<nav class="mt-2">
+		<ul class="nav nav-pills nav-sidebar flex-column"
+			data-widget="treeview" role="menu" data-accordion="false">
+
+			<!-- 
+			<a href="/bbs1/list" class="nav-link">
+					<i class="nav-icon fas fa-th"></i>
+					<p>1번 게시판</p>
+			</a> -->
+				<a th:each="board : ${boards}">
+				
+			<li class="nav-item mx-3">
+					<a th:href="@{|/bbs/${board.id}/list|}" style="color:white">
+					<span class="btn btn-dark" th:text="${ board.boardName }"></span>
+					</a>
+					
+					</li>
+				</a>
+				
+			<li class="nav-item">
+				  <a sec:authorize="hasAnyRole('ROLE_ADMIN','ROLE_SUBADMIN')" href="/board/control" class="nav-link"> 
+				  <span class="btn btn-warning">게시판 관리</span>
+				  </a>
+				  	</li>
+				  	
+			<li class="nav-item">
+				  <a sec:authorize="hasAnyRole('ROLE_ADMIN')" href="/member/control" class="nav-link"> 
+				  <span class="btn btn-warning">유저 관리</span>
+				  </a>
+			</li>
+
+		</ul>
+	</nav>
+
+	</div>
+</aside>

@@ -1,0 +1,8 @@
+<div th:fragment="formError" class="alert alert-danger" role="alert" th:if="${ #fields.hasAnyErrors() }">
+	<div th:each="err : ${ #fields.allErrors() }" th:text="${err}" />
+</div>
+<div th:fragment="loginError" th:if="${param.error}">
+    <div class="alert alert-danger">
+        로그인에 실패했습니다<br>
+        이메일과 비밀번호를 확인해주세요
+    </div>

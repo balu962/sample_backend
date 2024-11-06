@@ -1,0 +1,28 @@
+
+<nav th:fragment="navi" class="main-header navbar navbar-expand navbar-dark navbar-light">
+  <ul class="navbar-nav ml-auto">		
+  <li sec:authorize="isAuthenticated()" class="nav-item d-none d-sm-inline-block">
+		<a href="/member/detail" class="nav-link" th:text= ${nickname}></a>
+	</li>
+		<li sec:authorize="isAnonymous()" class="nav-item d-none d-sm-inline-block">
+		<a href="/member/login" class="nav-link">로그인</a>
+	</li>
+	<li sec:authorize="isAuthenticated()" class="nav-item d-none d-sm-inline-block">
+    <form action="/member/logout" method="POST" style="display: inline;">
+			      <!--/* CSRF 토큰 */-->
+	<input type="hidden" th:name="${ _csrf.parameterName }" th:value="${ _csrf.token }"/>
+    <button type="submit" class="nav-link" 
+    style="background: none; border: none; padding: 0; cursor: pointer;">
+        로그아웃
+    </button>
+    </form>
+	<li sec:authorize="isAnonymous()" class="nav-item d-none d-sm-inline-block">
+		<a href="/member/signup" class="nav-link">회원가입</a>
+	</li>
+		<li sec:authorize="isAnonymous()" class="nav-item d-none d-sm-inline-block">
+		<a href="/" class="nav-link">홈으로</a>
+	</li>
+		    <div>
+		    </div>
+	</ul>
+</nav>

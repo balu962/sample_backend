@@ -1,0 +1,91 @@
+<div th:fragment="main"  class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h1 class="m-0">메인 페이지</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+            </div><!-- /.col -->
+          </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+      <!-- /.content-header -->
+
+      <!-- Main content -->
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-lg-5 col-6">
+              <!-- small box -->
+              <div class="small-box py-2">
+	<div th:if="${boards == null or boards.isEmpty()}">
+	<h5 style="text-align: center">아직 게시판이 없습니다</h5>
+	</div>
+	<table class="table" th:if="${boards != null and !boards.isEmpty()}">
+	<a th:href=@{|/bbs/${boards[0].id}/list|}>
+	<h5 th:text="${boards[0].boardName}" style="text-align: center"></h5>
+	</a>
+		<thead class="table-info">
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>작성자</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="post, idx : ${bbsList1}">
+				<td th:text="${ post.listId}"></td>
+				<td>
+				<a th:href="@{|/bbs/${post.boardId}/post/${post.id}|}" th:text="${ post.subject }"></a>
+				</td>
+                <td th:text="${post.nickname}"></td>
+			</tr>
+		</tbody>
+	</table>
+              </div>
+            </div>
+            
+            <!-- ./col -->
+            <div class="col-lg-5 col-6">
+              <!-- small box -->
+              <div class="small-box py-2">
+	<div th:if="${boards.size()<2}">
+	<h5 style="text-align: center">아직 게시판이 없습니다</h5>
+	</div>
+	<table class="table" th:if="${boards.size() > 1}">
+	<a th:href=@{|/bbs/${boards[1].id}/list|}>
+	<h5 th:text="${boards[1].boardName}" style="text-align: center"></h5>
+	</a>
+		<thead class="table-info">
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>작성자</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="post, idx : ${bbsList2}">
+				<td th:text="${ post.listId}"></td>
+				<td>
+				<a th:href="@{|/bbs/${post.boardId}/post/${post.id}|}" th:text="${ post.subject }"></a>
+				</td>
+                <td th:text="${post.nickname}"></td>
+			</tr>
+		</tbody>
+	</table>
+              </div>
+            </div>
+            
+          </div>
+          <!-- /.row -->
+          
+        </div><!-- /.container-fluid -->
+      </section>
+
+				</div>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->

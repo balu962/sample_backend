@@ -1,0 +1,76 @@
+<div th:fragment="main" class="content-wrapper">
+	<div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+            <a th:href=@{|/bbs/${boardForm.boardId}/list|} style=" background: none; border: none; cursor: pointer;">
+              <h3 class="my-2" th:text="${boardForm.boardName}"></h3>
+              </a>
+              <h5 class="m-0" th:text="${boardForm.description}"></h5>
+            </div>
+          </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+ 
+ 	<section class="content">
+        <div class="container-fluid">
+        
+	<table class="table">
+		<thead class="table-info">
+			<tr>
+				<th>번호</th>
+				<th>제목</th>
+				<th>작성자</th>
+				<th>작성일시</th>
+				<th>조회수</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr th:each="boardPost, idx : ${paging}">
+				<td th:text="${ boardPost.listId}"></td>
+				<td>
+				<a th:href="@{|/bbs/${boardId}/post/${boardPost.id}|}" th:text="${ boardPost.subject }"></a>
+				</td>
+                <td th:text="${boardPost.nickname}"></td>
+				<td th:text="${ #temporals.format( boardPost.getCreateDate(), 'yyyy-MM-dd HH:mm')  }"></td>
+				<td th:text="${boardPost.views}"></td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="card-footer clearfix">
+		<ul class="pagination pagination-sm m-0">
+
+								<li class="page-item" th:if="${paging.number >= 10}">
+                <a th:href="@{/bbs/{boardId}/list(page=${paging.number - 10}, boardId=${boardId})}">이전 10페이지</a>
+         					   </li>
+							<!--/* 이전, 1페이지씩 쉬프트, 이전 페이지가 없다면 비활성처리(diable 속성) */-->
+							<!-- th:classappend="${paging.hasprevious} ? 뭘" 페이징이 순서상 이전 페이징이 있으면 뭘 처리하라 -->
+								<li class="page-item" th:classappend="${! paging.hasPrevious} ? 'disabled'">
+									<a th:href="@{/bbs/{boardId}/list(page=${paging.number - 1}, boardId=${boardId})}"
+								 class="page-link">≪</a>
+								</li>
+								<li class="page-item"  th:each="page : ${#numbers.sequence(0, paging.totalPages-1)}"
+								 th:classappend="${page == paging.number} ? 'active'"
+								 th:if="${ paging.number-5<=page and page<=paging.number+5 }">
+								<!-- <a class="page-link" th:href="@{|?page=${page}|}" th:text="${page+1}"></a> -->
+								<a class="px-1" th:href="@{/bbs/{boardId}/list(page=${page}, boardId=${boardId})}" th:text="${page+1}"></a>
+								</li>
+								
+							<!--/* 다음 */-->
+								<li class="page-item" th:classappend="${! paging.hasNext} ? 'disabled'">
+								<a th:href="@{/bbs/{boardId}/list(page=${paging.number + 1}, boardId=${boardId})}"
+								 class="page-link">≫</a>
+								</li>
+							<li class="page-item" th:if="${paging.number + 10 < paging.totalPages}">
+                <a th:href="@{/bbs/{boardId}/list(page=${paging.number + 10}, boardId=${boardId})}">다음 10페이지</a>
+            				</li>
+							</ul>
+
+	</div>
+	<a th:href="@{|/bbs/${boardId}/create|}" class="btn btn-success">게시물 생성</a>
+
+</div>
+</section>
+</div>
+</html>

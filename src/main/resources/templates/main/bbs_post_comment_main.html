@@ -1,0 +1,35 @@
+<div th:fragment="comment" class="card">
+	<div class="card-head mx-3">
+		<h4 class="border-bottom py-2 my-3"
+			th:text="|댓글 ${#lists.size(commentPaging)}개|"></h4>
+			</div>
+    <!-- HTML -->
+    <div class="card-body">
+    <!-- 댓글 반복 출력 -->
+    <div th:if="${commentError}" th:text="${commentError}"class="text-danger"></div>
+<div th:each="CommentForm, idx : ${commentPaging}" class="border border-primary rounded px-2 py-2 bg-light">
+        <p class="card-text" th:text="${ CommentForm.content }"></p>
+        <a class="card-title" th:text="${CommentForm.nickname}"></a>
+        <a class="card-subtitle mb-2 text-muted mx-4" th:text="${ #temporals.format( CommentForm.getCreateDate(), 'yyyy-MM-dd HH:mm')  }"></a>
+        <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_SUBADMIN')" style="display:inline;">
+<a class="btn btn-success rounded-pill" th:href="@{|/bbs/${boardId}/post/${boardPostId}/comment/modify/${CommentForm.Id}|}"  method="get">수정</a>
+   <form th:action="@{|/bbs/${boardId}/post/${boardPostId}/comment/delete/${CommentForm.Id}|}" method="post" style="display:inline;">
+   <a class="btn btn-danger rounded-pill">삭제</a>
+   </div>
+        </form>
+        </div>
+    
+		<div class="my-3 mx-2">
+			<form
+				th:action="@{|/bbs/${boardId}/post/${boardPostId}/comment/create|}"
+				method="post" th:object="${commentForm}">
+			      <!--/* CSRF 토큰 */-->
+	<input type="hidden" th:name="${ _csrf.parameterName }" th:value="${ _csrf.token }"/>
+				<input type="text" name="content" id="content">
+				<button type="submit" class="rounded-pill bg-info">댓글 등록</button>
+			</form>
+		</div>
+    </div>
+		
+
+</div>

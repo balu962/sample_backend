@@ -1,0 +1,165 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content">
+<style>
+#emailCheckResult {
+            display: none; /* 기본적으로 숨김 */
+            color: white; /* 텍스트 색상 */
+            background-color: rgba(255, 0, 0, 0.6); /* 반투명한 빨간색 배경 */
+            padding: 10px; /* 여백 추가 */
+            margin-bottom: 10px; /* 아래쪽 여백 */
+            border-radius: 5px; /* 모서리 둥글게 */
+        }
+#nicknameCheckResult {
+            display: none; /* 기본적으로 숨김 */
+            color: white; /* 텍스트 색상 */
+            background-color: rgba(255, 0, 0, 0.6); /* 반투명한 빨간색 배경 */
+            padding: 10px; /* 여백 추가 */
+            margin-bottom: 10px; /* 아래쪽 여백 */
+            border-radius: 5px; /* 모서리 둥글게 */
+        }
+</style>
+<div class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="/"><b>SAMPLE 사이트</b></a>
+  </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <h4 class="login-box-msg">회원가입</h4>
+</div>
+<div class="mx-3 mb-3" >
+      <form method="post" th:object="${memberForm}" th:action="@{/member/signup}">
+      <!--/* CSRF 토큰 */-->
+<input type="hidden" name="_csrf" value="${_csrf.token}">
+	<input type="hidden" th:name="${ _csrf.parameterName }" th:value="${ _csrf.token }"/>
+		<div th:replace="~{lib/error :: formError}"></div>
+		  <div id="emailCheckResult"></div> <!-- 이메일 중복 메시지 표시 위치 -->
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" name="email" id="email" placeholder="이메일">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+          <button type="button" onclick="checkEmail()">중복 확인</button> <!-- 이메일 중복 확인 버튼 -->
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" name="password" id="password"  placeholder="비밀번호">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" class="form-control" name="password1" id="password1"  placeholder="비밀번호 확인">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div id="nicknameCheckResult"></div> <!-- 닉네임 중복 확인 메세지 표시 -->
+<input type="hidden" name="_csrf" value="${_csrf.token}">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" name="nickname" id="nickname"  placeholder="닉네임">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+          <button type="button" onclick="checkNickname()">중복 확인</button>
+        </div>
+          
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">회원가입</button>   
+          <!-- /.col -->
+        </div>
+      </form>
+</div>
+</div>
+</div>
+    <script>
+    // 이메일 중복 확인 스크립트
+        function checkEmail() {
+            var email = $("#email").val();
+            if (email.trim() === "") {
+                $("#emailCheckResult").text("이메일을 입력해주세요").show();
+                setTimeout(() => {
+                	document.getElementById('emailCheckResult').style.display = 'none';
+                }, 4000);
+                return;
+            }
+            // csrf 토큰 
+            var csrfToken = $("input[name='_csrf']").val();
+
+            $.ajax({
+                type: "POST",
+                url: "/member/duplication/email",
+                data: { email: email },
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+                },
+    	        success: function(response) {
+    	            if (response===true) {
+    	                $("#emailCheckResult").text("이미 사용 중인 이메일입니다.").show();
+    	                // 4초 후 사라지게 설정
+    	                setTimeout(() => {
+    	                	document.getElementById('emailCheckResult').style.display = 'none';
+    	                }, 4000);
+    	            } else {
+    	                $("#emailCheckResult").text("사용 가능한 이메일입니다.").show();
+    	                setTimeout(() => {
+    	                	document.getElementById('emailCheckResult').style.display = 'none';
+    	                }, 4000);
+    	            }
+    	        },
+                error: function() {
+                    $("#emailCheckResult").text("오류가 발생했습니다.").show();
+                }
+            });
+        }
+    // 닉네임 중복 확인 스크립트
+	function checkNickname() {
+	    var nickname = $("#nickname").val();
+	    if (nickname.trim() === "") {
+	        $("#nicknameCheckResult").text("원하는 닉네임을 입력해주세요").show();
+	        setTimeout(() => {
+            	document.getElementById('emailCheckResult').style.display = 'none';
+            }, 4000);
+	        return;
+	    }
+
+	    // CSRF 토큰 읽기
+    var csrfToken = $("input[name='_csrf']").val();
+	    
+	    $.ajax({
+	        type: "POST",
+	        url: "/member/duplication/nickname",
+	        data: { nickname: nickname },
+	        beforeSend: function(xhr) {
+	            xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+	        },
+	        success: function(response) {
+	            if (response===true) {
+	                $("#nicknameCheckResult").text("이미 사용 중인 닉네임입니다.").show();
+	                setTimeout(() => {
+	                	document.getElementById('nicknameCheckResult').style.display = 'none';
+	                }, 4000);
+	            } else {
+	                $("#nicknameCheckResult").text("사용 가능한 닉네임입니다.").show();
+	                setTimeout(() => {
+	                	document.getElementById('nicknameCheckResult').style.display = 'none';
+	                }, 4000);
+	            }
+	        },
+	        error: function() {
+	            $("#nicknameCheckResult").text("오류가 발생했습니다.").show();
+	        }
+	    });
+	}
+    </script>
+</div>
+</html>

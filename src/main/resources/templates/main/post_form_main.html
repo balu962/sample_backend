@@ -1,0 +1,93 @@
+<div th:fragment="main" class="content-wrapper">
+
+	<div class="content-header mx-3">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <div class="col-sm-6">
+              <h3 class="my-2"> 게시글 작성 </h3>
+            </div>
+          </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+      </div>
+ 
+ 	<section class="content mx-3">
+	<div>
+		<form th:object="${postForm}" th:method="${ method }">
+			      <!--/* CSRF 토큰 */-->
+	<input type="hidden" th:name="${ _csrf.parameterName }" th:value="${ _csrf.token }"/>
+			<div th:replace="~{lib/error :: formError}"></div>
+			<div class="my-3">
+				<label for="subject" class="form-label">게시물 이름</label> 
+				<input
+					type="text" id="subject" th:field="*{subject}"
+					class="form-control">
+			</div>
+			<div class="my-3">
+				<label for="content" class="form-label">내용</label> 
+				<textarea
+					type="text" id="content" th:field="*{content}"
+					class="form-control"></textarea>
+			</div>
+<details>
+<!-- 태그 입력 칸 -->
+    <summary>태그 입력</summary>
+        <div id="tag-container">
+        </div>
+        <button class="rounded-pill bg-gradient my-2" type="button" onclick="addTagField()">태그 추가</button>
+        <button class="rounded-pill bg-gradient my-2" type="button" onclick="removeTagField()">태그 삭제</button>
+</details>
+<button type="submit" class="bg-info my-3">작성 완료</button>
+<input type="hidden" name="tags" value="" /> <!-- tags의 null 에러 방지용 빈 태그 -->
+</form>
+	</div>
+	
+    <script th:inline="javascript">
+        let tagCount = 0;
+        const maxTags = 10;
+
+        function addTagField() {
+            if (tagCount < maxTags) {
+                const tagContainer = document.getElementById('tag-container');
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.name = 'tags';
+                input.className = 'tag-input';
+                input.placeholder = '태그 입력창';
+                tagContainer.appendChild(input);
+                tagCount++;
+            } else {
+                alert('태그는 최대 10개까지 추가할 수 있습니다.');
+            }
+        }
+
+        function removeTagField() {
+            const tagContainer = document.getElementById('tag-container');
+            if (tagContainer.lastChild) {
+                tagContainer.removeChild(tagContainer.lastChild);
+                tagCount--;
+            }
+        }
+
+        function loadTags(tags) {
+            const tagContainer = document.getElementById('tag-container');
+            tags.forEach(tag => {
+                if (tagCount < maxTags) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.name = 'tags';
+                    input.className = 'tag-input';
+                    input.value = tag;
+                    tagContainer.appendChild(input);
+                    tagCount++;
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const tags = /*[[${postForm.tags}]]*/ [];
+            console.log(tags); // 태그 데이터 확인
+            loadTags(tags);
+        });
+    </script>
+</section>
+</div>
